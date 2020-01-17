@@ -6,20 +6,16 @@ Displays PowerShell policy for transcription
 .EXAMPLE
 PS C:\> Get-PSPolicyTranscription
 #>
-Function Set-PSPolicyTranscription {
+Function Get-PSPolicyTranscription {
     [CmdletBinding()]
-    param (
-        [Parameter()]
-        [switch]
-        $Enable,
-        [Parameter()]
-        [switch]
-        $Header,
-        [Parameter()]
-        [string]
-        $Path
-    )
+    param ()
 
     $BasePath = 'HKLM:\Software\Policies\Microsoft\Windows\PowerShell\Transcription'
-    Get-ItemProperty -Path $BasePath | Select-Object EnableTranscripting, EnableInvocationHeader, OutputDirectory
+    Try {
+        $ErrorActionPreference = 'Stop'
+        Get-ItemProperty -Path $BasePath | Select-Object EnableTranscripting, EnableInvocationHeader, OutputDirectory
+    }
+    Catch {
+        Write-Warning 'Policy not found'
+    }
 }

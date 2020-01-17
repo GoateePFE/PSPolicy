@@ -5,12 +5,12 @@ Configures PowerShell policy for transcription
 Configures PowerShell policy for transcription
 .PARAMETER Enable
 EnableTranscripting
-.PARAMETER Header
+.PARAMETER Invocation
 EnableInvocationHeader
 .PARAMETER Path
 OutputDirectory
 .EXAMPLE
-PS C:\> Set-PSPolicyTranscription -Enable -Header -Path 'C:\PSTranscript'
+PS C:\> Set-PSPolicyTranscription -Enable -Invocation -Path 'C:\PSTranscript'
 Sets explicit values
 .EXAMPLE
 PS C:\> Set-PSPolicyTranscription -Enable:$false
@@ -26,7 +26,7 @@ Function Set-PSPolicyTranscription {
         $Enable,
         [Parameter()]
         [switch]
-        $Header,
+        $Invocation,
         [Parameter()]
         [string]
         $Path
@@ -34,7 +34,7 @@ Function Set-PSPolicyTranscription {
 
     $BasePath = 'HKLM:\Software\Policies\Microsoft\Windows\PowerShell\Transcription'
     If (-not (Test-Path $BasePath)) {
-        $Void = New-Item $BasePath -Force -Verbose:$Verbose
+        $Void = New-Item $BasePath -Force
     }
 
     If ($PSBoundParameters.ContainsKey('Enable')) {
@@ -42,8 +42,8 @@ Function Set-PSPolicyTranscription {
         $Void = New-ItemProperty -Path $BasePath -Name EnableTranscripting -Value $Value -PropertyType DWord -Force
     }
 
-    If ($PSBoundParameters.ContainsKey('Header')) {
-        If ($Header.ToBool()) {$Value = 1} Else {$Value = 0}
+    If ($PSBoundParameters.ContainsKey('Invocation')) {
+        If ($Invocation.ToBool()) {$Value = 1} Else {$Value = 0}
         $Void = New-ItemProperty -Path $BasePath -Name EnableInvocationHeader -Value $Value -PropertyType DWord -Force
     }
 
