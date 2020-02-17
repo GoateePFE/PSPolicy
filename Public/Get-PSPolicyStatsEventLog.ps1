@@ -14,8 +14,10 @@ PS C:\> Get-PSPolicyStatsEventLog
 .NOTES
 LogName - Event log name
 Count - How many event log entries exist in total
-TotalBytes - Actual event log space on disk
-MaximumBytes - Configured maximum size of log
+TotalBytes - Actual event log space on disk in bytes
+TotalMB - Actual event log space on disk in MB
+MaximumBytes - Configured maximum size of log in bytes
+MaximumMB - Configured maximum size of log in MB
 OldestInDays - How old is the oldest event log entry?
 IsHardened - Has the hardening ACL been applied? Does not verify that a reboot has happened to enforce the ACL.
 SDDL - The actual event log ACL
@@ -32,7 +34,9 @@ Function Get-PSPolicyStatsEventLog {
         Get-WinEvent -ListLog $_ | Select-Object LogName, 
             @{n='Count';e={$_.RecordCount}}, 
             @{n='TotalBytes';e={$_.FileSize}}, 
+            @{n='TotalMB';e={$_.FileSize / 1MB}}, 
             @{n='MaximumBytes';e={$_.MaximumSizeInBytes}}, 
+            @{n='MaximumMB';e={$_.MaximumSizeInBytes / 1MB}}, 
             @{n='OldestInDays';e={"$([math]::Ceiling((New-TimeSpan -Start (Get-WinEvent -LogName $_.LogName -MaxEvents 1 -Oldest).TimeCreated).TotalDays))"}}, 
             @{n='IsHardened';e={$_.SecurityDescriptor -in $HardenedACLs}}, 
             @{n='SDDL';e={$_.SecurityDescriptor}}

@@ -14,7 +14,8 @@ PS C:\> Get-PSPolicyStatsTranscription
 .NOTES
 LogName - Descriptive string for correlation with the event log policy statistics
 Count - How many transcript files exist in the directory structure
-TotalBytes - Total disk space used
+TotalBytes - Total disk space used in bytes
+TotalMB - Total disk space used in MB
 OldestInDays - How old is the oldest transcript file?
 IsHidden - Do the directory attributes include by System and Hidden?
 Attributes - The directory attributes
@@ -35,6 +36,7 @@ Function Get-PSPolicyStatsTranscription {
             LogName = 'Transcription'
             Count = $CountLen.Count
             TotalBytes = $CountLen.Sum
+            TotalMB = $CountLen.Sum / 1MB
             OldestInDays = [math]::Floor((New-TimeSpan -Start ($PSTranscriptDir | Measure-Object -Minimum -Property LastWriteTime | Select-Object -ExpandProperty Minimum)).TotalDays)
             IsHidden = ($attrib -like "*s*" -and $attrib -like "*h*")
             Attributes = $attrib
